@@ -1,10 +1,31 @@
-h1 {
+header {
+    display: flex;
     text-align: left;
     border-bottom: 1px solid #000;
     padding-top: 0;
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 1rem;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
 }
+
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    width: 6rem;
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 1rem;
+    margin-right: 0.5rem;
+    border: none;
+    background-color: #5e0194;
+    cursor: pointer;
+    border-radius: 0.8rem;
+}
+
