@@ -1,0 +1,36 @@
+.league-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.league-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem;
+}
+
+.table {
+    width: 60%; /* Adjust this to change the width of the table */
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border-top: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.table th {
+    border-top: none;
+    background-color: #ffffff;
+}
+
+.ucl {
+    border-left: 4px solid rgb(63, 63, 255);
+}
+
+.uel {
+    border-left : 4px solid orange;
+}
