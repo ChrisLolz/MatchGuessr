@@ -20,9 +20,9 @@ import com.chris.backend.payload.request.LoginRequest;
 import com.chris.backend.payload.request.SignupRequest;
 import com.chris.backend.payload.response.JwtResponse;
 import com.chris.backend.payload.response.MessageResponse;
-import com.chris.backend.repositories.AccountRepository;
 import com.chris.backend.security.jwt.JwtUtils;
 import com.chris.backend.security.services.AccDetailsImpl;
+import com.chris.backend.services.AccountService;
 
 import jakarta.validation.Valid;
 
@@ -33,7 +33,7 @@ public class AuthController {
     AuthenticationManager authenticationManager;
     
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -64,16 +64,31 @@ public class AuthController {
   
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (accountRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (accountService.findByUsername(signUpRequest.getUsername()) != null) {
             return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Username is already taken!"));
         }
   
         Account account = new Account(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
-    
-        accountRepository.save(account);
+
+        accountService.save(account);
   
-      return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+    
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+        
+        AccDetailsImpl userDetails = (AccDetailsImpl) authentication.getPrincipal();    
+            
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, 
+                                userDetails.getId(), 
+                                userDetails.getUsername(), 
+                                roles));
     }
 }

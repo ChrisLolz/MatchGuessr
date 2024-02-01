@@ -26,6 +26,7 @@ public class JwtUtils {
     private int jwtExpirationMs = 86400000;
 
     public String generateJwtToken(Authentication authentication) {
+        System.out.println("generateJwtToken");
         AccDetailsImpl userPrincipal = (AccDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()

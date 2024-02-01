@@ -14,7 +14,7 @@ const LeagueTable = (props: LeagueProps) => {
           leagueService.getLeagueStandings(props.code),})
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <div>Loading {'('}sorry if it takes a while, server has to cold start if it hasn't been used in a while{')'}</div>
     }
 
     if (error instanceof Error) {

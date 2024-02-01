@@ -12,12 +12,17 @@ header {
     align-items: center;
 }
 
-h1 {
+header h1 {
     margin: 0;
     padding: 0;
 }
 
-button {
+header a {
+    text-decoration: none;
+    color: #000;
+}
+
+.auth-buttons button {
     width: 6rem;
     color: #ffffff;
     font-size: 1rem;

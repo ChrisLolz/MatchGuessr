@@ -14,25 +14,41 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.chris.backend.controllers.AccountController;
+import com.chris.backend.controllers.AuthController;
 import com.chris.backend.controllers.CompetitionController;
 import com.chris.backend.controllers.MatchController;
 import com.chris.backend.controllers.TeamController;
+import com.chris.backend.models.Account;
 import com.chris.backend.models.Competition;
 import com.chris.backend.models.Match;
 import com.chris.backend.models.Team;
+import com.chris.backend.payload.request.SignupRequest;
+import com.chris.backend.security.jwt.JwtUtils;
+import com.chris.backend.security.services.AccDetailsImpl;
+import com.chris.backend.services.AccountService;
 import com.chris.backend.services.CompetitionService;
 import com.chris.backend.services.MatchService;
 import com.chris.backend.services.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest({TeamController.class, CompetitionController.class, MatchController.class})
+@WebMvcTest({TeamController.class, CompetitionController.class, MatchController.class, AccountController.class, AuthController.class})
 class FootballApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
 	
+	@MockBean
+	private AuthenticationManager authenticationManager;
+
+	@MockBean
+	private AccDetailsImpl accDetailsImpl;
+
 	@MockBean
 	private TeamService teamService;
 
@@ -41,6 +57,18 @@ class FootballApplicationTests {
 
 	@MockBean
 	private MatchService matchService;
+
+	@MockBean
+	private AccountService accountService;
+
+	@MockBean
+	private PasswordEncoder passwordEncoder;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
+
+	@MockBean
+	private JwtUtils jwtUtils;
 
 	private Competition premierLeague = new Competition("Premier League", "PL", "England", 2023, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
 
@@ -121,4 +149,16 @@ class FootballApplicationTests {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.round").value(1));
 	}
 
+	@Test
+	@SuppressWarnings("null")
+	void createAccount() throws Exception {
+		SignupRequest signupRequest = new SignupRequest();
+		signupRequest.setUsername("Chrisjghjhgjghj");
+		signupRequest.setPassword("1234ghjgjghjghj");
+		Mockito.when(accountService.save(Mockito.any(Account.class))).thenReturn(new Account("Chris", "1234"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(ObjectMapper.writeValueAsString(signupRequest)))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}
 }
