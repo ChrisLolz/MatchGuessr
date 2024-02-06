@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import './Header.css'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -8,12 +7,6 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
     const navigate = useNavigate()
-
-    useEffect(() => {
-        if (props.token) {
-            navigate('/MatchGuessr/')
-        }
-    }, [props.token, navigate]);
 
     return (
         <header>

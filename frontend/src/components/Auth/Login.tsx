@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import userService from '../../services/user';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
     setToken: (token: string) => void;
@@ -8,6 +9,7 @@ interface LoginProps {
 const Login = (props: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
     
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -17,6 +19,7 @@ const Login = (props: LoginProps) => {
             return;
         }
         props.setToken(token);
+        navigate('/MatchGuessr/')
     };
     
     return (

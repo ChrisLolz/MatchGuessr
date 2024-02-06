@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import leagueService from '../../services/league';
 import './LeagueTable.css'
+import { useNavigate } from 'react-router-dom';
 
 interface LeagueProps {
     name: string;
@@ -8,10 +9,12 @@ interface LeagueProps {
 }
 
 const LeagueTable = (props: LeagueProps) => {
+    const navigate = useNavigate();
     const { data, isLoading, error } = useQuery({
         queryKey: ['league', props.code],
-        queryFn: () =>
-          leagueService.getLeagueStandings(props.code),})
+        queryFn: () => leagueService.getLeagueStandings(props.code),
+        staleTime: 1000 * 60 * 5, 
+    })
 
     if (isLoading) {
         return <div>Loading {'('}sorry if it takes a while, server has to cold start if it hasn't been used in a while{')'}</div>
@@ -23,6 +26,7 @@ const LeagueTable = (props: LeagueProps) => {
     
     return (
         <div className="league-table">
+            <button onClick={()=>navigate('/MatchGuessr/league/' + props.code + '/predict')}>Predict Matchweeks</button>
             <h2 className="league-title">{props.name} {'('}updates every 5min{')'}</h2>
             <table className='table'>
                 <thead>
