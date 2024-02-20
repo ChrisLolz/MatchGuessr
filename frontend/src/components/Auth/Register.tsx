@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import userService from '../../services/user';
 import './Auth.css';
 import { useNavigate } from 'react-router-dom';
+import { TokenContext } from '../../contexts/TokenContext';
 
-interface RegisterProps {
-    setToken: (token: string) => void;
-}
-
-const Register = (props: RegisterProps) => {
+const Register = () => {
+    const { setToken } = useContext(TokenContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,7 +22,7 @@ const Register = (props: RegisterProps) => {
             alert("Invalid username or password. Username may already be taken or username and password may be too short.");
             return;
         }
-        props.setToken(token);
+        setToken(token);
         navigate('/MatchGuessr/');
     }
 

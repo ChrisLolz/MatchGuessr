@@ -10,12 +10,16 @@ import com.chris.backend.services.AdminService;
 @Configuration
 @EnableScheduling
 public class SchedulerConfig {
+
     @Autowired
     private AdminService adminService;
+
     @Scheduled(fixedDelay = 5*60*1000)
     public void refreshLeagues() {
-        System.out.println("Refreshing leagues");
-        adminService.setPremierLeague();
-        System.out.println("Leagues refreshed");
+        adminService.setLeague("PL");
+        adminService.setLeague("PD");
+        adminService.setLeague("SA");
+        adminService.setLeague("BL1");
+        adminService.setLeague("FL1");
     }
 }

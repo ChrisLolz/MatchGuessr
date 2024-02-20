@@ -23,11 +23,30 @@ const LeagueTable = (props: LeagueProps) => {
     if (error instanceof Error) {
         return <div>Error: something went wrong</div>
     }
+
+    const europeSpot = (position: number) => {
+        if (props.code === 'PL' || props.code === 'PD' || props.code === 'SA' || props.code === 'BL1') {
+            if (position <= 4) {
+                return 'ucl';
+            } else if (position === 5) {
+                return 'uel';
+            }
+        } else {
+            if (position <= 3) {
+                return 'ucl';
+            } else if (position === 4) {
+                return 'uel';
+            } else if (position === 5) {
+                return 'uecl';
+            }
+        }
+    }
     
     return (
+        data &&
         <div className="league-table">
-            <button onClick={()=>navigate('/MatchGuessr/league/' + props.code + '/predict')}>Predict Matchweeks</button>
-            <h2 className="league-title">{props.name} {'('}updates every 5min{')'}</h2>
+            <button onClick={()=>navigate('/MatchGuessr/competition/' + props.code + '/predict')}>Predict Matchweeks</button>
+            <img className="league-logo" src={data[0].competition_Crest} alt="league crest" />
             <table className='table'>
                 <thead>
                     <tr>
@@ -44,18 +63,18 @@ const LeagueTable = (props: LeagueProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data?.map((team) => (
+                    {data.map((team) => (
                         <tr key={Math.random()}>
-                            <td className={data.indexOf(team) + 1 <=4 ? 'ucl' : data.indexOf(team) + 1 == 5 ? 'uel' : ''}>{data.indexOf(team) + 1}</td>
-                            <td>{team.team_Name}</td>
-                            <td>{team.matches_Played}</td>
-                            <td>{team.wins}</td>
-                            <td>{team.draws}</td>
-                            <td>{team.losses}</td>
-                            <td>{team.goals_For}</td>
-                            <td>{team.goals_Against}</td>
-                            <td>{team.goal_Difference}</td>
-                            <td>{team.points}</td>
+                            <td className={'pos ' + europeSpot(data.indexOf(team) + 1)}>{data.indexOf(team) + 1}</td>
+                            <td className="team-cell"><img className="team-logo" src={team.crest} alt="team crest" />{team.team_Name}</td>
+                            <td className="stat">{team.matches_Played}</td>
+                            <td className="stat">{team.wins}</td>
+                            <td className="stat">{team.draws}</td>
+                            <td className="stat">{team.losses}</td>
+                            <td className="stat">{team.goals_For}</td>
+                            <td className="stat">{team.goals_Against}</td>
+                            <td className="stat">{team.goal_Difference}</td>
+                            <td className="stat">{team.points}</td>
                         </tr>
                     ))}
                 </tbody>

@@ -1,8 +1,10 @@
 package com.chris.backend.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,12 +13,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Match {
     public enum Status {
-        SCHEDULED, LIVE, FINISHED, CANCELED
+        SCHEDULED, LIVE, FINISHED, CANCELLED, POSTPONED
     }
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -46,9 +49,9 @@ public class Match {
     private int awayGoals = 0;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="match_date")
-    private LocalDate matchDate;
+    private LocalDateTime matchDate;
 
     @NotNull
     @Column(name="status")
@@ -58,9 +61,12 @@ public class Match {
     @Column(name="round")
     private int round = 0;
 
+    @OneToMany(mappedBy="match")
+    private Set<Guess> guesses;
+
     public Match() {}
 
-    public Match(Team homeTeam, Team awayTeam, Competition competition, int homeGoals, int awayGoals, LocalDate matchDate, Status status, int round) {
+    public Match(Team homeTeam, Team awayTeam, Competition competition, int homeGoals, int awayGoals, LocalDateTime matchDate, Status status, int round) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.competition = competition;
@@ -73,6 +79,8 @@ public class Match {
 
     public Integer getId() { return id; }
 
+    public void setId(Integer id) { this.id = id; }
+
     public Team getHomeTeam() { return homeTeam; }
 
     public Team getAwayTeam() { return awayTeam; }
@@ -83,7 +91,10 @@ public class Match {
 
     public int getAwayGoals() { return awayGoals; }
 
-    public LocalDate getMatchDate() { return matchDate; }
+    public LocalDateTime getMatchDate() { return matchDate; }
+
+    @JsonIgnore
+    public Set<Guess> getGuesses() { return guesses; }
 
     public void setHomeTeam(Team homeTeam) { this.homeTeam = homeTeam; }
 
@@ -95,7 +106,7 @@ public class Match {
 
     public void setAwayGoals(int awayGoals) { this.awayGoals = awayGoals; }
 
-    public void setMatchDate(LocalDate matchDate) { this.matchDate = matchDate; }
+    public void setMatchDate(LocalDateTime matchDate) { this.matchDate = matchDate; }
 
     public Status getStatus() { return status; }
 
@@ -104,6 +115,8 @@ public class Match {
     public int getRound() { return round; }
 
     public void setRound(int round) { this.round = round; }
+
+    public void setGuesses(Set<Guess> guesses) { this.guesses = guesses; }
 
     @Override
     public boolean equals(Object o) {

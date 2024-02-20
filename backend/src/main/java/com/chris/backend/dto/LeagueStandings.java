@@ -2,6 +2,8 @@ package com.chris.backend.dto;
 
 public interface LeagueStandings {
     String getTeam_Name();
+    String getCrest();
+    String getCompetition_Crest();
     Integer getMatches_Played();
     Integer getWins();
     Integer getDraws();

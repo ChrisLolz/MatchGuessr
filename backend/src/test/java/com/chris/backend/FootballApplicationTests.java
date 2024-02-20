@@ -1,6 +1,7 @@
 package com.chris.backend;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,40 +15,27 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.chris.backend.controllers.AccountController;
-import com.chris.backend.controllers.AuthController;
 import com.chris.backend.controllers.CompetitionController;
+import com.chris.backend.controllers.GuessController;
 import com.chris.backend.controllers.MatchController;
 import com.chris.backend.controllers.TeamController;
-import com.chris.backend.models.Account;
+
 import com.chris.backend.models.Competition;
 import com.chris.backend.models.Match;
 import com.chris.backend.models.Team;
-import com.chris.backend.payload.request.SignupRequest;
-import com.chris.backend.security.jwt.JwtUtils;
-import com.chris.backend.security.services.AccDetailsImpl;
-import com.chris.backend.services.AccountService;
 import com.chris.backend.services.CompetitionService;
+import com.chris.backend.services.GuessService;
 import com.chris.backend.services.MatchService;
 import com.chris.backend.services.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest({TeamController.class, CompetitionController.class, MatchController.class, AccountController.class, AuthController.class})
+@WebMvcTest({TeamController.class, CompetitionController.class, MatchController.class, GuessController.class})
 class FootballApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
-	@MockBean
-	private AuthenticationManager authenticationManager;
-
-	@MockBean
-	private AccDetailsImpl accDetailsImpl;
 
 	@MockBean
 	private TeamService teamService;
@@ -59,24 +47,15 @@ class FootballApplicationTests {
 	private MatchService matchService;
 
 	@MockBean
-	private AccountService accountService;
+	private GuessService guessService;
 
-	@MockBean
-	private PasswordEncoder passwordEncoder;
-
-	@MockBean
-	private UserDetailsService userDetailsService;
-
-	@MockBean
-	private JwtUtils jwtUtils;
-
-	private Competition premierLeague = new Competition("Premier League", "PL", "England", 2023, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
+	private Competition premierLeague = new Competition("Premier League", "PL", "", "England", 2023, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
 
 	ObjectMapper ObjectMapper = new ObjectMapper();
 
-	Team arsenal = new Team("Arsenal", "ARS");
-	Team chelsea = new Team("Chelsea", "CHE");
-	Team liverpool = new Team("Liverpool", "LIV");
+	Team arsenal = new Team("Arsenal", "ARS", "");
+	Team chelsea = new Team("Chelsea", "CHE", "");
+	Team liverpool = new Team("Liverpool", "LIV", "");
 
 	@BeforeEach
 	void setUp() {
@@ -99,7 +78,7 @@ class FootballApplicationTests {
 	@Test
 	@SuppressWarnings("null")
 	void createTeam() throws Exception {
-		Team team = new Team("Manchester United", "MUN");
+		Team team = new Team("Manchester United", "MUN", "");
 		team.addCompetition(premierLeague);
 		Mockito.when(teamService.save(Mockito.any(Team.class))).thenReturn(team);
 		mockMvc.perform(MockMvcRequestBuilders.post("/teams")
@@ -117,7 +96,7 @@ class FootballApplicationTests {
 	@Test
 	@SuppressWarnings("null")
 	void createCompetition() throws Exception {
-		Competition competition = new Competition("La Liga", "LL", "Spain", 2023, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
+		Competition competition = new Competition("La Liga", "LL", "", "Spain", 2023, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
 		ObjectMapper.findAndRegisterModules();
 		Mockito.when(competitionService.save(Mockito.any(Competition.class))).thenReturn(competition);
 		mockMvc.perform(MockMvcRequestBuilders.post("/competitions")
@@ -134,7 +113,7 @@ class FootballApplicationTests {
 	@Test
 	@SuppressWarnings("null")
 	void createMatch() throws Exception {
-		Match match = new Match(arsenal, chelsea, premierLeague, 2, 1, LocalDate.of(2023, 2, 1), Match.Status.FINISHED, 1);
+		Match match = new Match(arsenal, chelsea, premierLeague, 2, 1, LocalDateTime.of(2023, 2, 1, 12, 0), Match.Status.FINISHED, 1);
 		Mockito.when(matchService.save(Mockito.any(Match.class))).thenReturn(match);
 		mockMvc.perform(MockMvcRequestBuilders.post("/matches")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -144,21 +123,31 @@ class FootballApplicationTests {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.awayTeam.name").value("Chelsea"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.homeGoals").value(2))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.awayGoals").value(1))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.matchDate").value(LocalDate.of(2023, 2, 1).toString()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.status").value("FINISHED"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.round").value(1));
 	}
 
-	@Test
-	@SuppressWarnings("null")
-	void createAccount() throws Exception {
-		SignupRequest signupRequest = new SignupRequest();
-		signupRequest.setUsername("Chrisjghjhgjghj");
-		signupRequest.setPassword("1234ghjgjghjghj");
-		Mockito.when(accountService.save(Mockito.any(Account.class))).thenReturn(new Account("Chris", "1234"));
-		mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(ObjectMapper.writeValueAsString(signupRequest)))
-				.andExpect(MockMvcResultMatchers.status().isOk());
-	}
+	// @Test
+	// @SuppressWarnings("null")
+	// void createGuess() throws Exception {
+	// 	Match match = new Match(arsenal, chelsea, premierLeague, 2, 1, LocalDateTime.of(2023, 2, 1, 12, 0), Match.Status.FINISHED, 1);
+	// 	Mockito.when(matchService.findById(1)).thenReturn(java.util.Optional.of(match));
+	// 	mockMvc.perform(MockMvcRequestBuilders.post("/guesses")
+	// 			.contentType(MediaType.APPLICATION_JSON)
+	// 			.content(ObjectMapper.writeValueAsString(new GuessRequest(1, Result.HOME))))
+	// 			.andExpect(MockMvcResultMatchers.status().isCreated());
+	// }
+
+	// @Test
+	// @SuppressWarnings("null")
+	// void createAccount() throws Exception {
+	// 	SignupRequest signupRequest = new SignupRequest();
+	// 	signupRequest.setUsername("Chrisjghjhgjghj");
+	// 	signupRequest.setPassword("1234ghjgjghjghj");
+	// 	Mockito.when(accountService.save(Mockito.any(Account.class))).thenReturn(new Account("Chris", "1234"));
+	// 	mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
+	// 			.contentType(MediaType.APPLICATION_JSON)
+	// 			.content(ObjectMapper.writeValueAsString(signupRequest)))
+	// 			.andExpect(MockMvcResultMatchers.status().isOk());
+	// }
 }

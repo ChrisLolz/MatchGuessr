@@ -26,7 +26,9 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
     Set<Competition> findByTeamsId(Integer id);
 
     @Query(value = "SELECT t.name AS team_name, " +
-        "COUNT(m.id) AS matches_played, "+
+        "c.crest AS competition_crest, " +
+        "COUNT(m.id) AS matches_played, "+ 
+        "t.crest AS crest," +
         "SUM(CASE WHEN m.home_team_id = t.id AND m.home_goals > m.away_goals THEN 1 "+
                 "WHEN m.away_team_id = t.id AND m.away_goals > m.home_goals THEN 1 "+
                 "ELSE 0 END) AS wins, "+
@@ -56,7 +58,8 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
         "INNER JOIN team t ON tc.team_id = t.id "+
         "LEFT JOIN match m ON (m.home_team_id = t.id OR m.away_team_id = t.id) AND m.status = 2 "+
     "WHERE "+
-        "c.code = :code AND c.season = :season "+
+        "c.code = :code AND " +
+        "(:season = 0 AND c.season = (SELECT MAX(season) FROM competition WHERE code = :code) OR c.season = :season) "+
     "GROUP BY "+
         "c.id, t.id "+
     "ORDER BY "+

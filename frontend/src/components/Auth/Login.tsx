@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import userService from '../../services/user';
 import { useNavigate } from 'react-router-dom';
+import { TokenContext } from '../../contexts/TokenContext';
 
-interface LoginProps {
-    setToken: (token: string) => void;
-}
-
-const Login = (props: LoginProps) => {
+const Login = () => {
+    const { setToken } = useContext(TokenContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -18,7 +16,7 @@ const Login = (props: LoginProps) => {
             alert("Invalid username or password")
             return;
         }
-        props.setToken(token);
+        setToken(token);
         navigate('/MatchGuessr/')
     };
     

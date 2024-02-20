@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -29,8 +28,11 @@ public class MatchController {
     private MatchService matchService;
 
     @GetMapping
-    public List<Match> findAll() {
-        return matchService.findAll();
+    public List<Match> findAll(@RequestParam(required = false) Integer competitionId,
+                               @RequestParam(required = false) Integer homeTeamId,
+                               @RequestParam(required = false) Integer awayTeamId,
+                               @RequestParam(required = false) LocalDate matchDate) {
+        return matchService.findAll(competitionId, homeTeamId, awayTeamId, matchDate);
     }
 
     @GetMapping("/{id}")
@@ -38,12 +40,9 @@ public class MatchController {
         return matchService.findById(id);
     }
 
-    @ResponseBody
-    public Set<Match> findByQueries(@RequestParam(value = "competitionId", required = false) Integer competitionId,
-            @RequestParam(value = "homeTeamId", required = false) Integer homeTeamId,
-            @RequestParam(value = "awayTeamId", required = false) Integer awayTeamId,
-            @RequestParam(value = "matchDate", required = false) LocalDate matchDate) {
-        return matchService.findByQueries(competitionId, homeTeamId, awayTeamId, matchDate);
+    @GetMapping("/competition/{code}")
+    public Set<Match> findByCompetitionCode(@PathVariable String code) {
+        return matchService.findByCompetitionCode(code);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

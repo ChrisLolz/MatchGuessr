@@ -26,6 +26,9 @@ public class Team {
 
     @NotNull
     @Column(unique=true)
+    private String crest;
+
+    @NotNull
     private String code;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -38,9 +41,10 @@ public class Team {
 
     public Team() {}
 
-    public Team(String name, String code) {
+    public Team(String name, String code, String crest) {
         this.name = name;
         this.code = code;
+        this.crest = crest;
     }
 
     public Integer getId() { return id; }
@@ -49,6 +53,7 @@ public class Team {
 
     public String getCode() { return code; }
 
+    public String getCrest() { return crest; }
 
     public Set<Competition> getCompetitions() { return competitions; }
 
@@ -59,6 +64,8 @@ public class Team {
     public void setCompetitions(Set<Competition> competitions) { this.competitions = competitions; }
 
     public void addCompetition(Competition competition) { this.competitions.add(competition); }
+
+    public void setCrest(String crest) { this.crest = crest; }
 
     @Override
     public boolean equals(Object o) {

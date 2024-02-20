@@ -33,6 +33,7 @@ public class JwtUtils {
             .subject((userPrincipal.getUsername()))
             .issuedAt(new Date())
             .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .claim("id", userPrincipal.getId())
             .signWith(key(),Jwts.SIG.HS512)
             .compact();
     }

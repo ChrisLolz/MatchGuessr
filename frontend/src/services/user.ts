@@ -1,5 +1,5 @@
-const baseURL = "https://matchguessr.azurewebsites.net/auth"
-// const baseURL = "http://localhost:8080/auth"
+//const baseURL = "https://matchguessr.azurewebsites.net/auth"
+const baseURL = "http://localhost:8080/auth"
 
 const register = async (username: string, password: string) => {
   const response = await fetch(`${baseURL}/register`, {
@@ -26,4 +26,16 @@ const login = async (username: string, password: string) => {
   return data.token as string;
 }
 
-export default { register, login }
+const verify = async (token: string) => {
+  const response = await fetch(`${baseURL}/validate`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+  });
+
+  return response.status === 200;
+}
+
+export default { register, login, verify };

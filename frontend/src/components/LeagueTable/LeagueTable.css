@@ -4,21 +4,21 @@
     align-items: center;
 }
 
-.league-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0.5rem;
-}
-
 .table {
-    width: 60%; /* Adjust this to change the width of the table */
+    width: 100%;
     border-collapse: collapse;
+    display: table;
+    margin: auto;
+    max-width: 800px;
 }
 
 .table th,
 .table td {
     border-top: 1px solid #ddd;
-    padding: 0.5rem;
+    padding: 0.3rem;
+}
+
+.stat {
     text-align: center;
 }
 
@@ -33,4 +33,31 @@
 
 .uel {
     border-left : 4px solid orange;
+}
+
+.uecl {
+    border-left: 4px solid green;
+}
+
+.pos {
+    text-align: center;
+    width: 5%;
+}
+
+.league-logo {
+    min-width: 80px;
+    width: 10%;
+    margin: 1% 0 1% 0;
+}
+
+.team-cell {
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.team-logo {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }

@@ -17,6 +17,35 @@ public class AdminController {
 
     @PostMapping("/PL")
     public void setPremierLeague() {
-        adminService.setPremierLeague();
+        adminService.setLeague("PL");
+    }
+
+    @PostMapping("/PD")
+    public void setLaLiga() {
+        adminService.setLeague("PD");
+    }
+
+    @PostMapping("/SA")
+    public void setSerieA() {
+        adminService.setLeague("SA");
+    }
+
+    @PostMapping("/BL1")
+    public void setBundesliga() {
+        adminService.setLeague("BL1");
+    }
+
+    @PostMapping("/FL1")
+    public void setLigue1() {
+        adminService.setLeague("FL1");
+    }
+
+    @PostMapping()
+    public void setAllLeagues() {
+        adminService.setLeague("PL");
+        adminService.setLeague("PD");
+        adminService.setLeague("SA");
+        adminService.setLeague("BL1");
+        adminService.setLeague("FL1");
     }
 }

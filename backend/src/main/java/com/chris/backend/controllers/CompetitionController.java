@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,8 +57,11 @@ public class CompetitionController {
         return competitionService.findByDate(date);
     }
 
-    @GetMapping("/standings/{code}/{season}")
-    public List<LeagueStandings> getLeagueStandings(@PathVariable String code, @PathVariable int season) {
+    @GetMapping("/standings/{code}")
+    public List<LeagueStandings> getLeagueStandings(@PathVariable String code, @RequestParam(value = "season", required = false) Integer season) {
+        if (season == null) {
+            return competitionService.getLeagueStandings(code, 0);
+        }
         return competitionService.getLeagueStandings(code, season);
     }
 

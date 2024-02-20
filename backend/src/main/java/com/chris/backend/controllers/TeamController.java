@@ -27,7 +27,6 @@ public class TeamController {
     private TeamService teamService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<Team> findAll() {
         return teamService.findAll();
     }

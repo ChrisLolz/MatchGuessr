@@ -30,6 +30,9 @@ public class Competition {
     private String code;
 
     @NotNull
+    private String crest;
+
+    @NotNull
     private String country;
 
     @NotNull
@@ -49,9 +52,10 @@ public class Competition {
 
     public Competition() {}
 
-    public Competition(String name, String code, String country, int season, LocalDate startDate, LocalDate endDate) {
+    public Competition(String name, String code, String crest, String country, int season, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.code = code;
+        this.crest = crest;
         this.country = country;
         this.season = season;
         this.startDate = startDate;
@@ -74,7 +78,11 @@ public class Competition {
 
     public String getCode() { return code; }
 
+    public String getCrest() { return crest; }
+
     public void setCode(String code) { this.code = code; }
+
+    public void setCrest(String crest) { this.crest = crest; }
 
     public void setName(String name) { this.name = name; }
 
@@ -95,7 +103,7 @@ public class Competition {
         if (o == this) return true;
         if (!(o instanceof Competition)) return false;
         Competition competition = (Competition) o;
-        if (competition.getName().equals(this.name) && 
+        if (competition.getCode().equals(this.code) && 
             competition.getCountry().equals(this.country) && 
             competition.getSeason() == this.season && 
             competition.getStartDate().equals(this.startDate) && 

@@ -23,7 +23,8 @@ public class Config implements WebMvcConfigurer{
             .build();
     }
 
-    @Override
+    @SuppressWarnings("null")
+	@Override
     public void addCorsMappings(CorsRegistry registry) {
         System.out.println("Adding CORS mappings...");
         registry.addMapping("/**")

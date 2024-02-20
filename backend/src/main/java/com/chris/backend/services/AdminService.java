@@ -1,25 +1,31 @@
 package com.chris.backend.services;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.chris.backend.models.Competition;
 import com.chris.backend.models.Match;
 import com.chris.backend.models.Team;
+import com.chris.backend.payload.response.FootballDataResponse;
+import com.chris.backend.payload.response.FootballDataTeamsResponse;
+import com.chris.backend.payload.response.FootballDataResponse.MatchResponse;
+import com.chris.backend.payload.response.FootballDataTeamsResponse.TeamResponse;
 import com.chris.backend.repositories.CompetitionRepository;
 import com.chris.backend.repositories.MatchRepository;
 import com.chris.backend.repositories.TeamRepository;
 
+import jakarta.transaction.Transactional;
+
+@EnableAsync
+@Transactional
 @Service
 public class AdminService {
     @Autowired
@@ -34,87 +40,92 @@ public class AdminService {
     @Autowired
     private MatchRepository matchRepository;
     
-    public void setPremierLeague() {
-
+    @Async
+    public void setLeague(String code) {
+        long startTime = System.currentTimeMillis(); 
         try {
-            Map<String, Object> response = webClient.get()
-                .uri("competitions/PL/teams")
+            FootballDataTeamsResponse response = webClient.get()
+                .uri("competitions/" + code + "/teams")
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .bodyToMono(FootballDataTeamsResponse.class)
                 .block();
-            Competition premierLeague = new Competition();
-            premierLeague.setName("Premier League");
-            premierLeague.setCountry("England");
-            premierLeague.setCode("PL");
-            premierLeague.setSeason(Integer.parseInt((String) ((Map<String, Object>) response.get("filters")).get("season")));
-            premierLeague.setStartDate(LocalDate.parse((String) ((Map<String, Object>) response.get("season")).get("startDate")));
-            premierLeague.setEndDate(LocalDate.parse((String) ((Map<String, Object>) response.get("season")).get("endDate")));
-            if (competitionRepository.findByNameAndSeason("Premier League", premierLeague.getSeason()) == null) {
-                competitionRepository.save(premierLeague);
+            Competition league = new Competition();
+            league.setName(response.getCompetition().getName());
+            league.setCountry(response.getTeams()[0].getArea().getName());
+            league.setCode(code);
+            //https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/1200px-Premier_League_Logo.svg.png
+            league.setCrest(response.getCompetition().getEmblem());
+            league.setSeason(Integer.parseInt(response.getFilters().getSeason()));
+            league.setStartDate(response.getSeason().getStartDate());
+            league.setEndDate(response.getSeason().getEndDate());
+            if (competitionRepository.findByNameAndSeason(league.getName(), league.getSeason()) == null) {
+                competitionRepository.save(league);
             } else {
-                premierLeague = competitionRepository.findByNameAndSeason("Premier League", premierLeague.getSeason());
+                league = competitionRepository.findByNameAndSeason(league.getName(), league.getSeason());
             }
             Set<Team> teamsToSave = new HashSet<>();
-            for (Map<String, Object> team : (List<Map<String, Object>>) response.get("teams")) {
-                Team t = teamRepository.findByCode((String) team.get("tla"));
+            for (TeamResponse team : response.getTeams()) {
+                Team t = teamRepository.findByName(team.getShortName());
                 if (t == null) {
-                    t = new Team((String) team.get("name"), (String) team.get("tla"));
-                    t.addCompetition(premierLeague);
+                    t = new Team(team.getShortName(), team.getTla(), team.getCrest());
+                    t.addCompetition(league);
                     teamsToSave.add(t);
-                } else if (!t.getCompetitions().contains(premierLeague)) {
-                    t.addCompetition(premierLeague);
+                } else if (!t.getCompetitions().contains(league)) {
+                    t.addCompetition(league);
                     teamsToSave.add(t);
                 }
             }
             teamRepository.saveAll(teamsToSave);
-            int season = premierLeague.getSeason();
-            Map<String, Object> response2 = webClient.get()
-                .uri("competitions/PL/matches?season=" + season)
+            int season = league.getSeason();
+            FootballDataResponse response2 = webClient.get()
+                .uri("competitions/" + code + "/matches?season=" + season)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .bodyToMono(FootballDataResponse.class)
                 .block();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
             Set<Match> matchesToSave = new HashSet<>();
             Map<String, Team> teams = new HashMap<>();
             Map<String, Match> dbMatches = new HashMap<>();
-            for (Match m : matchRepository.findByCompetition(premierLeague)) {
+            for (Match m : matchRepository.findByCompetition(league)) {
                 dbMatches.put(m.getHomeTeam().getCode() + m.getRound(), m);
             }
-            for (Team t : teamRepository.findByCompetitionsId(premierLeague.getId())) {
+            for (Team t : teamRepository.findByCompetitionsId(league.getId())) {
                 teams.put(t.getCode(), t);
             }
-            for (Map<String, Object> matches : (List<Map<String, Object>>) response2.get("matches")) {
-                Match m = dbMatches.get((String) ((Map<String, Object>) matches.get("homeTeam")).get("tla") + (int) matches.get("matchday"));
+            for (MatchResponse matches : response2.getMatches()) {
+                Match m = dbMatches.get(matches.getHomeTeam().getTla() + matches.getMatchday());
                 if (m == null) m = new Match();
-                m.setCompetition(premierLeague);
-                if (matches.get("status").equals("FINISHED")) {
+                m.setCompetition(league);
+                if (matches.getStatus().equals("FINISHED")) {
                     m.setStatus(Match.Status.FINISHED);
-                } else if (matches.get("status").equals("SCHEDULED")) {
+                } else if (matches.getStatus().equals("SCHEDULED")) {
                     m.setStatus(Match.Status.SCHEDULED);
-                } else if (matches.get("status").equals("IN_PLAY")) {
+                } else if (matches.getStatus().equals("IN_PLAY")) {
                     m.setStatus(Match.Status.LIVE);
-                } else if (matches.get("status").equals("TIMED")) {
+                } else if (matches.getStatus().equals("TIMED")) {
                     m.setStatus(Match.Status.SCHEDULED);
-                } else if (matches.get("status").equals("PAUSED")) {
+                } else if (matches.getStatus().equals("PAUSED")) {
                     m.setStatus(Match.Status.LIVE);
-                } else if (matches.get("status").equals("POSTPONED")) {
+                } else if (matches.getStatus().equals("POSTPONED")) {
+                    m.setStatus(Match.Status.POSTPONED);
+                } else if (matches.getStatus().equals("SUSPENDED")) {
                     m.setStatus(Match.Status.SCHEDULED);
-                } else if (matches.get("status").equals("SUSPENDED")) {
-                    m.setStatus(Match.Status.SCHEDULED);
-                } else if (matches.get("status").equals("CANCELED")) {
-                    m.setStatus(Match.Status.CANCELED);
+                } else if (matches.getStatus().equals("CANCELED")) {
+                    m.setStatus(Match.Status.CANCELLED);
+                } else if (matches.getStatus().equals("AWARDED")) {
+                    m.setStatus(Match.Status.FINISHED);
                 }
-                m.setHomeTeam(teams.get((String) ((Map<String, Object>) matches.get("homeTeam")).get("tla")));
-                m.setAwayTeam(teams.get((String) ((Map<String, Object>) matches.get("awayTeam")).get("tla")));
-                m.setRound((int) matches.get("matchday"));
-                m.setMatchDate(LocalDate.parse((String) matches.get("utcDate"), formatter));
-                if (((Map<String, Object>) matches.get("score")).get("winner") != null) {
-                    m.setHomeGoals((int) ((Map<String, Object>) ((Map<String, Object>) matches.get("score")).get("fullTime")).get("home"));
-                    m.setAwayGoals((int) ((Map<String, Object>) ((Map<String, Object>) matches.get("score")).get("fullTime")).get("away"));
+                m.setHomeTeam(teams.get(matches.getHomeTeam().getTla()));
+                m.setAwayTeam(teams.get(matches.getAwayTeam().getTla()));
+                m.setRound(matches.getMatchday());
+                m.setMatchDate(matches.getUtcDate());
+                if (matches.getScore().getWinner() != null) {
+                    m.setHomeGoals(matches.getScore().getFullTime().getHome());
+                    m.setAwayGoals(matches.getScore().getFullTime().getAway());
                 }
                 matchesToSave.add(m);
             }
             matchRepository.saveAll(matchesToSave);
+            System.out.println(code + " refreshed in " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
         } catch (Exception e) {
             e.printStackTrace();
         }

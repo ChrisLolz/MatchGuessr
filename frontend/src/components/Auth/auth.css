@@ -46,6 +46,6 @@ input {
     width: 100%;
 }
 
-button:hover {
+.auth button:hover {
     background-color: #4b0172;
 }

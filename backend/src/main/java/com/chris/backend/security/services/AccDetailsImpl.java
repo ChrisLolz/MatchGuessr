@@ -34,7 +34,7 @@ public class AccDetailsImpl implements UserDetails {
                 account.getId(),
                 account.getUsername(),
                 account.getPassword(),
-                account.isAdmin() ? List.of(() -> "ROLE_ADMIN") : List.of(() -> "ROLE_USER"));
+                account.isAdmin() ? List.of(() -> "ROLE_ADMIN", () -> "ROLE_USER") : List.of(() -> "ROLE_USER"));
     }
 
     @Override

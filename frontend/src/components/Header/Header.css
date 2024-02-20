@@ -1,19 +1,16 @@
 header {
     display: flex;
     text-align: left;
-    border-bottom: 1px solid #000;
-    padding-top: 0;
     margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 1em;
     justify-content: space-between;
     align-items: center;
+    background-color: #F7F4FD;
 }
 
-header h1 {
-    margin: 0;
+header h2 {
+    color: #5e0194;
+    margin: 0 1em 0 0;
     padding: 0;
 }
 
@@ -22,15 +19,65 @@ header a {
     color: #000;
 }
 
+.left-header {
+    display: flex;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: auto;
+}
+
+nav li {
+    display: inline-block;
+    margin-right: 1em;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+nav li:hover {
+    text-decoration: underline;
+}
+
+.auth-buttons {
+    display: flex;
+}
+
 .auth-buttons button {
-    width: 6rem;
+    width: 100%;
+    min-width: 100px;
+    min-height: 45px;
+    font-weight: bold;
     color: #ffffff;
     font-size: 1rem;
-    padding: 1rem;
-    margin-right: 0.5rem;
+    margin-right: 0.5em;
     border: none;
     background-color: #5e0194;
     cursor: pointer;
-    border-radius: 0.8rem;
+    border-radius: 10px;
+    padding: 0 1em 0 1em;
+}
+
+.auth-buttons button:hover {
+    background-color: #4b0172;
+}
+
+@media screen and (max-width: 850px) {
+    header {
+        padding: 0.5em;
+    }
+
+    .auth-buttons button {
+        min-width: 60px;
+        min-height: 30px;
+        font-size: 0.7rem;
+        padding: 0 0.5em 0 0.5em;
+    }
+
+    nav {
+        display: none;
+    }
 }
 

@@ -16,8 +16,8 @@ public class MatchService {
     @Autowired
     private MatchRepository matchRepository;
 
-    public List<Match> findAll() {
-        return matchRepository.findAll();
+    public List<Match> findAll(Integer competitionId, Integer homeTeamId, Integer awayTeamId, LocalDate matchDate) {
+        return matchRepository.findAll(competitionId, homeTeamId, awayTeamId, matchDate);
     }
 
     public Optional<Match> findById(Integer id) {
@@ -25,8 +25,8 @@ public class MatchService {
         return matchRepository.findById(id);
     }
 
-    public Set<Match> findByQueries(Integer competitionId, Integer homeTeamId, Integer awayTeamId, LocalDate matchDate) {
-        return matchRepository.findByQueries(competitionId, homeTeamId, awayTeamId, matchDate);
+    public Set<Match> findByCompetitionCode(String code) {
+        return matchRepository.findByCompetitionCode(code);
     }
 
     public Match save(Match match) {
