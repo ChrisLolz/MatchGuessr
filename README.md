@@ -22,5 +22,5 @@ spring.datasource.username=<username>
 spring.datasource.password=<password>
 spring.jpa.hibernate.ddl-auto=create-drop (can change if you want)
 api.key=<football-data.org api key>
-jwt.secret=<secret>
+jwt.key=<secret>
 ```
