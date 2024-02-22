@@ -23,6 +23,12 @@ const Guess = (props: GuessProps) => {
         }
     }, [navigate]);
 
+    useEffect(() => {
+        if (localStorage.getItem('round-' + props.code)) {
+            setRound(parseInt(localStorage.getItem('round-' + props.code) as string));
+        }
+    }, [props.code]);
+
     const {data: matches, isLoading, error} = useQuery({
         queryKey: ['matches', props.code],
         queryFn: () => guessService.getGuesses(props.code, token),
@@ -69,6 +75,16 @@ const Guess = (props: GuessProps) => {
         return <div>Error: something went wrong</div>
     }
 
+    const handleButtonClick = (direction: string) => {
+        if (direction === 'next' && matches && round < Math.max(...matches.map(match => match.round))) {
+            setRound(round + 1);
+        } else if (direction === 'previous' && round > 1) {
+            setRound(round - 1);
+        }
+        localStorage.setItem('round-' + props.code, round.toString());
+    }
+
+
     const correctGuess = (status: string, result: Result, homeGoals: number, awayGoals: number) => {
         if (status === 'FINISHED' && result === Result.HOME && homeGoals > awayGoals) {
             return ' correct';
@@ -98,9 +114,9 @@ const Guess = (props: GuessProps) => {
             <main className='guess'>
                 <button className='leaguetable-button' onClick={() => navigate('/MatchGuessr/competition/' + props.code)}>Go back to league table</button>
                 <div className = 'matchweek'>
-                    <button className='paginator' onClick={() => round > 1 && setRound(round - 1)}>{'<'}</button>
+                    <button className='paginator' onClick={()=>handleButtonClick('previous')}>{'<'}</button>
                     <h2>Matchweek {round}</h2>
-                    <button className='paginator' onClick={() => round < Math.max(...matches.map(match => match.round)) && setRound(round + 1)}>{'>'}</button>
+                    <button className='paginator' onClick={()=>handleButtonClick('next')}>{'>'}</button>
                 </div>
                 <div className='matches'>
                     {matches.filter(match => match.round == round).map((match, index) => (

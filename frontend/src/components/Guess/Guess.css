@@ -123,7 +123,7 @@
     background-color: #f5f5f5;
 }
 
-.home-team .selected, .away-team .selected {
+.home-team .selected, .away-team .selected, .draw.selected {
     background-color: #5e0194;
     color: white;
 }
