@@ -112,7 +112,7 @@ const Guess = (props: GuessProps) => {
                             <div className='match-buttons'>
                                 <div className='home-team'>
                                     <button 
-                                        className={match.result === 'HOME' ? ' selected' : ''}
+                                        className={match.result === 'HOME' ? 'selected' : ''}
                                         onClick={() => guessMatch(match.id, Result.HOME, match.result)}
                                         disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
                                         <img src={match.homeTeam.crest} alt={match.homeTeam.name}/>
@@ -129,7 +129,7 @@ const Guess = (props: GuessProps) => {
                                 }
                                 <div className='away-team'>
                                     <button 
-                                        className={match.result === 'AWAY' ? ' selected' : ''}
+                                        className={match.result === 'AWAY' ? 'selected' : ''}
                                         onClick={() => guessMatch(match.id, Result.AWAY, match.result)}
                                         disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
                                         <img src={match.awayTeam.crest} alt={match.awayTeam.name}/>
