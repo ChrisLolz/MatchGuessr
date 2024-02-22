@@ -76,12 +76,16 @@ const Guess = (props: GuessProps) => {
     }
 
     const handleButtonClick = (direction: string) => {
-        if (direction === 'next' && matches && round < Math.max(...matches.map(match => match.round))) {
-            setRound(round + 1);
-        } else if (direction === 'previous' && round > 1) {
-            setRound(round - 1);
-        }
-        localStorage.setItem('round-' + props.code, round.toString());
+        setRound(prevRound => {
+            let newRound = prevRound;
+            if (direction === 'next' && matches && prevRound < Math.max(...matches.map(match => match.round))) {
+                newRound = prevRound + 1;
+            } else if (direction === 'previous' && prevRound > 1) {
+                newRound = prevRound - 1;
+            }
+            localStorage.setItem('round-' + props.code, newRound.toString());
+            return newRound;
+        });
     }
 
 
