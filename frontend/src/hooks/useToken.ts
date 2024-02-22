@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import userService from '../../services/user';
+import userService from '../services/user';
 
 export default function useToken() {
     const [token, setToken] = useState(<string | null>(null));

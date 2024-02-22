@@ -64,20 +64,18 @@ nav li:hover {
     background-color: #4b0172;
 }
 
-@media screen and (max-width: 850px) {
-    header {
-        padding: 0.5em;
+@media screen and (max-width: 940px) {
+    nav > ul > :not(.lb) {
+        display: none;
     }
+}
 
+@media screen and (max-width: 500px){
     .auth-buttons button {
         min-width: 60px;
         min-height: 30px;
         font-size: 0.7rem;
         padding: 0 0.5em 0 0.5em;
-    }
-
-    nav {
-        display: none;
     }
 }
 

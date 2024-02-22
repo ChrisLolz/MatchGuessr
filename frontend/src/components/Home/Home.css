@@ -1,11 +1,16 @@
 .home {
     display: flex;
     flex-direction: column;
+}
+
+.home .competitions {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     background-color: #F7F4FD;
 }
 
-.home h1 {
+.home .competitions h1 {
     font-weight: bold;
     font-size: 3rem;
 }
@@ -30,6 +35,17 @@
     border-radius: 10px;
     height: 200px;
     flex-grow: 1;
+}
+
+.home .leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home .leaderboard h2 {
+    font-weight: bold;
+    font-size: 2rem;
 }
 
 @media (min-width: 851px) {

@@ -22,7 +22,7 @@ import com.chris.backend.models.Match;
 import com.chris.backend.services.MatchService;
 
 @RestController
-@RequestMapping("/matches")
+@RequestMapping("/api/matches")
 public class MatchController {
     @Autowired
     private MatchService matchService;

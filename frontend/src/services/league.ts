@@ -1,5 +1,5 @@
 //const baseURL = "https://matchguessr.azurewebsites.net/competitions/standings"
-const baseURL = "http://localhost:8080"
+const baseURL = "http://localhost:8080/api"
 
 interface Standing {
     points: number,

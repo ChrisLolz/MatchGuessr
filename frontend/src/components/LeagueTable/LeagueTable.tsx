@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import leagueService from '../../services/league';
 import './LeagueTable.css'
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { TokenContext } from '../../contexts/TokenContext';
 
 interface LeagueProps {
     name: string;
@@ -10,6 +12,7 @@ interface LeagueProps {
 
 const LeagueTable = (props: LeagueProps) => {
     const navigate = useNavigate();
+    const { token } = useContext(TokenContext);
     const { data, isLoading, error } = useQuery({
         queryKey: ['league', props.code],
         queryFn: () => leagueService.getLeagueStandings(props.code),
@@ -45,7 +48,9 @@ const LeagueTable = (props: LeagueProps) => {
     return (
         data &&
         <div className="league-table">
-            <button onClick={()=>navigate('/MatchGuessr/competition/' + props.code + '/predict')}>Predict Matchweeks</button>
+            {token 
+            ? <button className="matchweek-button" onClick={()=>navigate('/MatchGuessr/competition/' + props.code + '/predict')}>Predict Matchweeks</button>
+            : <button className="matchweek-button" onClick={()=>navigate('/MatchGuessr/auth/login')}>Login to Predict Matchweeks</button>}
             <img className="league-logo" src={data[0].competition_Crest} alt="league crest" />
             <table className='table'>
                 <thead>

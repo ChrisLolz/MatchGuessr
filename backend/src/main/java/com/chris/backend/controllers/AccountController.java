@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
     private AccountService AccountService;
@@ -32,7 +32,7 @@ public class AccountController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<Account> findByID(@PathVariable Integer id) {
+    public Optional<Account> findByID(@PathVariable Long id) {
         return AccountService.findByID(id);
     }
 
@@ -42,10 +42,10 @@ public class AccountController {
         return AccountService.findByUsername(username);
     }
 
-    @GetMapping("/admins")
+    @GetMapping("/roles")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Account> findByAdmin() {
-        return AccountService.findByAdmin(true);
+    public List<Account> findByRoles(@RequestBody List<String> roles) {
+        return AccountService.findByRoles(roles);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,7 +57,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteByID(@PathVariable Integer id) {
+    public void deleteByID(@PathVariable Long id) {
         AccountService.deleteByID(id);
     }
 }

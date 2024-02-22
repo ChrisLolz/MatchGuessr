@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.chris.backend.dto.Leaderboard;
 import com.chris.backend.dto.MatchAndGuess;
 import com.chris.backend.models.Guess;
 import com.chris.backend.models.Guess.Result;
@@ -23,12 +24,20 @@ public class GuessService {
         return guessRepository.findAll();
     }
 
-    public Set<Guess> findGuessesByCompetition(String code, Integer userId) {
+    public Set<Guess> findGuessesByCompetition(String code, Long userId) {
         return guessRepository.findGuessesByCompetition(code, userId);
     }
 
-    public Set<MatchAndGuess> findMatchAndGuesses(String code, Integer userId) {
+    public Set<MatchAndGuess> findMatchAndGuesses(String code, Long userId) {
         return guessRepository.findMatchAndGuesses(code, userId);
+    }
+
+    public Set<Leaderboard> getLeaderboard() {
+        return guessRepository.getLeaderboard();
+    }
+
+    public Set<Leaderboard> getLeaderboardByCompetition(String code) {
+        return guessRepository.getLeaderboardByCompetition(code);
     }
 
     public Optional<Guess> findById(Integer userId) {
@@ -41,18 +50,17 @@ public class GuessService {
         return guessRepository.findByMatchId(matchId);
     }
 
-    public Set<Guess> findByAccountId(Integer accountId) {
+    public Set<Guess> findByAccountId(Long accountId) {
         return guessRepository.findByAccountId(accountId);
     }
 
     @Transactional
-    public boolean save(Integer accountId, Integer matchId, Result result) {
-        System.out.println(accountId + " " + matchId + " " + result);
+    public boolean save(Long accountId, Integer matchId, Result result) {
         return guessRepository.save(accountId, matchId, result) > 0;
     }
 
     @Transactional
-    public boolean update(Integer accountId, Integer matchId, Result result) {
+    public boolean update(Long accountId, Integer matchId, Result result) {
         return guessRepository.save(accountId, matchId, result) > 0;
     }
 

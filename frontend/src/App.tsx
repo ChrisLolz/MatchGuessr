@@ -1,12 +1,13 @@
 import LeagueTable from './components/LeagueTable/LeagueTable'
 import Header from './components/Header/Header'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Register from './components/Auth/Register'
 import Login from './components/Auth/Login'
-import useToken from './components/Auth/useToken'
+import useToken from './hooks/useToken'
 import Home from './components/Home/Home'
 import Guess from './components/Guess/Guess'
 import { TokenContext } from './contexts/TokenContext'
+import Leaderboard from './components/Leaderboard/Leaderboard'
 
 const App = () => {
   const { token, setToken } = useToken();
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/MatchGuessr/*" element={
             <Routes>
               <Route path="/" element={<Home/>}/>
+              <Route path="/leaderboard" element={<Leaderboard/>}/>
               <Route path="/auth/register" element={<Register/>} />
               <Route path="/auth/login" element={<Login/>} />
               <Route path="/competition/PL" element={<LeagueTable name="Premier League" code="PL"/>}/>
@@ -30,6 +32,7 @@ const App = () => {
               <Route path="/competition/SA/predict" element={<Guess code="SA"/>}/>
               <Route path="/competition/BL1/predict" element={<Guess code="BL1"/>}/>
               <Route path="/competition/FL1/predict" element={<Guess code="FL1"/>}/>
+              <Route path="*" element={<Navigate to="/MatchGuessr/"/>}/>
             </Routes>
           }/>
         </Routes>

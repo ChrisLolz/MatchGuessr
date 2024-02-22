@@ -5,6 +5,16 @@
     margin-top: 1em;
 }
 
+.leaguetable-button {
+    color: white;
+    cursor: pointer;
+    background-color: #5e0194;
+    border-radius: 5px;
+    margin-bottom: 2em;
+    padding: 0.5em 1em 0.5em 1em;
+    border: none;
+}
+
 .matchweek {
     display:flex;
     min-height: 20px;

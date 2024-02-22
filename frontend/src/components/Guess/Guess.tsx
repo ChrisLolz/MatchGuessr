@@ -1,9 +1,10 @@
 import './Guess.css';
 import guessService, { Result } from '../../services/guess';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TokenContext } from '../../contexts/TokenContext';
 import { Match } from '../../services/league';
+import { useNavigate } from 'react-router-dom';
 
 interface GuessProps {
     code: string;
@@ -13,11 +14,18 @@ const Guess = (props: GuessProps) => {
     const queryClient = useQueryClient();
     const { token } = useContext(TokenContext);
     const [round, setRound] = useState(1);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/MatchGuessr/auth/login');
+        }
+    }, [token, navigate]);
 
     const {data: matches, isLoading, error} = useQuery({
         queryKey: ['matches', props.code],
         queryFn: () => guessService.getGuesses(props.code, token),
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60,
     });
 
     const mutation = useMutation({
@@ -35,6 +43,7 @@ const Guess = (props: GuessProps) => {
             if (cache) {
                 const match = cache.map(match => match.id === variables.matchId ? {...match, result: variables.choice} : match);
                 queryClient.setQueryData(['matches', props.code], match);
+                queryClient.invalidateQueries({queryKey: ['leaderboard']});
             }
         },
     });
@@ -68,6 +77,7 @@ const Guess = (props: GuessProps) => {
     return (
         matches && (
             <main className='guess'>
+                <button className='leaguetable-button' onClick={() => navigate('/MatchGuessr/competition/' + props.code)}>Go back to league table</button>
                 <div className = 'matchweek'>
                     <button className='paginator' onClick={() => round > 1 && setRound(round - 1)}>{'<'}</button>
                     <h2>Matchweek {round}</h2>

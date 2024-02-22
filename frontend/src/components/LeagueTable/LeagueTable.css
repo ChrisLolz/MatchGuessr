@@ -4,6 +4,16 @@
     align-items: center;
 }
 
+.matchweek-button {
+    color: white;
+    cursor: pointer;
+    background-color: #5e0194;
+    border-radius: 5px;
+    margin: 1em;
+    padding: 0.5em 1em 0.5em 1em;
+    border: none;
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;

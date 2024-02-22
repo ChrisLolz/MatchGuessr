@@ -3,12 +3,14 @@ import userService from '../../services/user';
 import './Auth.css';
 import { useNavigate } from 'react-router-dom';
 import { TokenContext } from '../../contexts/TokenContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Register = () => {
     const { setToken } = useContext(TokenContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -17,13 +19,15 @@ const Register = () => {
             alert('Passwords do not match');
             return;
         }
-        const token = await userService.register(username, password);
-        if (token == null) {
+        try {
+            const token = await userService.register(username, password);
+            setToken(token);
+            navigate('/MatchGuessr/');
+            queryClient.invalidateQueries({queryKey: ['leaderboard']});
+        } catch (error) {
             alert("Invalid username or password. Username may already be taken or username and password may be too short.");
             return;
         }
-        setToken(token);
-        navigate('/MatchGuessr/');
     }
 
     return (

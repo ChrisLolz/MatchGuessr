@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AccountRepository extends JpaRepository<Account, Integer>{
+public interface AccountRepository extends JpaRepository<Account, Long>{
     Account findByUsername(String username);
 
     boolean existsByUsername(String username);
 
-    List<Account> findByAdmin(boolean admin);
+    List<Account> findByRolesIn(List<String> roles);
 }

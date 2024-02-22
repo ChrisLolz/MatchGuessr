@@ -2,22 +2,26 @@ import { useContext, useState } from 'react';
 import userService from '../../services/user';
 import { useNavigate } from 'react-router-dom';
 import { TokenContext } from '../../contexts/TokenContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Login = () => {
     const { setToken } = useContext(TokenContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
     
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const token = await userService.login(username, password);
-        if (token == null) {
-            alert("Invalid username or password")
+        try {
+            const token = await userService.login(username, password);
+            setToken(token);
+            navigate('/MatchGuessr/')
+            queryClient.invalidateQueries({queryKey: ['leaderboard']});
+        } catch (error) {
+            alert("Invalid username or password");
             return;
         }
-        setToken(token);
-        navigate('/MatchGuessr/')
     };
     
     return (

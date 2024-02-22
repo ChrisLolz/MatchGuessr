@@ -1,5 +1,5 @@
 //const baseURL = "https://matchguessr.azurewebsites.net/guess"
-const baseURL = "http://localhost:8080/guess"
+const baseURL = "http://localhost:8080/api/guess"
 
 export enum Result {
     HOME = 'HOME',
@@ -32,6 +32,13 @@ interface Match {
     matchDate: string;
     round: number;
     result: Result;
+}
+
+interface Leaderboard {
+    username: string;
+    points: number;
+    guesses: number;
+    correct_guesses: number;
 }
 
 const getGuesses = async (code: string, token: string | null) => {
@@ -75,5 +82,11 @@ const updateGuess = async (guess: Guess, token: string | null) => {
     return res.status === 200;
 }
 
-export default { getGuesses, makeGuess, updateGuess }
+const getLeaderboard = async (code: string) => {
+    if (code === "/All") { code = ""; }
+    const res = await fetch(baseURL+`/leaderboard${code}`);
+    return await res.json() as Leaderboard[];
+}
+
+export default { getGuesses, makeGuess, updateGuess, getLeaderboard };
 

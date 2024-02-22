@@ -25,6 +25,7 @@ const Header = () => {
                         <li><Link to="/MatchGuessr/competition/PD">La Liga</Link></li>
                         <li><Link to="/MatchGuessr/competition/SA">Serie A</Link></li>
                         <li><Link to="/MatchGuessr/competition/FL1">Ligue 1</Link></li>
+                        <li className='lb'><Link to="/MatchGuessr/leaderboard">Leaderboard</Link></li>
                     </ul>
                 </nav>
             </div>

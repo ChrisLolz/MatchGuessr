@@ -22,7 +22,7 @@ import com.chris.backend.models.Competition;
 import com.chris.backend.services.CompetitionService;
 
 @RestController
-@RequestMapping("/competitions")
+@RequestMapping("/api/competitions")
 public class CompetitionController {
     @Autowired
     private CompetitionService competitionService;

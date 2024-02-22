@@ -23,7 +23,6 @@
     padding-right: 1.5rem;
     border-radius: 10px;
     background-color: #ffffff;
-    width: 20%;
 }
 
 input {
@@ -48,4 +47,10 @@ input {
 
 .auth button:hover {
     background-color: #4b0172;
+}
+
+@media screen and (min-width: 1000px) {
+    .auth form {
+        width: 350px
+    }
 }

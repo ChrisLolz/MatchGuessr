@@ -21,7 +21,7 @@ import com.chris.backend.models.Team;
 import com.chris.backend.services.TeamService;
 
 @RestController
-@RequestMapping("/teams")
+@RequestMapping("/api/teams")
 public class TeamController {
     @Autowired
     private TeamService teamService;
