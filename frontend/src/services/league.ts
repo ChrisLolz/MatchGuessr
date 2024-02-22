@@ -13,6 +13,7 @@ interface Standing {
     goals_For: number,
     goals_Against: number,
     goal_Difference: number
+    position: number
 }
 
 export interface Match {

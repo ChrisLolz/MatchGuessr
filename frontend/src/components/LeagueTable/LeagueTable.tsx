@@ -15,7 +15,13 @@ const LeagueTable = (props: LeagueProps) => {
     const { token } = useContext(TokenContext);
     const { data, isLoading, error } = useQuery({
         queryKey: ['league', props.code],
-        queryFn: () => leagueService.getLeagueStandings(props.code),
+        queryFn: async () => {
+            const league = await leagueService.getLeagueStandings(props.code);
+            return league.map((team, index) => ({
+                ...team,
+                position: index + 1
+            }));
+        },
         staleTime: 1000 * 60 * 5, 
     })
 

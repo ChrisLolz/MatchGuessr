@@ -68,7 +68,13 @@
     align-items: center;
 }
 
-.home-team, .away-team{
+.home-team, .away-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-team button, .away-team button{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -102,9 +108,8 @@
 }
 
 .home-team img, .away-team img {
-    width: 100%;
-    max-width: 150px;
-    max-height: 150px;
+    width: 150px;
+    height: 150px;
 }
 
 .draw {
@@ -124,7 +129,7 @@
 }
 
 @media (max-width: 768px) {
-    .home-team, .away-team  {
+    .home-team button, .away-team button {
         max-width: 100px;
         max-height: 100px;
     }

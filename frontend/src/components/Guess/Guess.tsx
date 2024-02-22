@@ -1,5 +1,6 @@
 import './Guess.css';
 import guessService, { Result } from '../../services/guess';
+import leagueService from '../../services/league';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { TokenContext } from '../../contexts/TokenContext';
@@ -12,21 +13,33 @@ interface GuessProps {
 
 const Guess = (props: GuessProps) => {
     const queryClient = useQueryClient();
-    const { token } = useContext(TokenContext);
     const [round, setRound] = useState(1);
+    const { token } = useContext(TokenContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) {
+        if (!localStorage.getItem('token')) {
             navigate('/MatchGuessr/auth/login');
         }
-    }, [token, navigate]);
+    }, [navigate]);
 
     const {data: matches, isLoading, error} = useQuery({
         queryKey: ['matches', props.code],
         queryFn: () => guessService.getGuesses(props.code, token),
         staleTime: 1000 * 60,
     });
+
+    const { data: leagueTable } = useQuery({
+        queryKey: ['league', props.code],
+        queryFn: async () => {
+            const league = await leagueService.getLeagueStandings(props.code);
+            return league.map((team, index) => ({
+                ...team,
+                position: index + 1
+            }));
+        },
+        staleTime: 1000 * 60 * 5, 
+    })
 
     const mutation = useMutation({
         mutationFn: (guess: {matchId: number, choice: Result, result: Result}) => {
@@ -70,6 +83,12 @@ const Guess = (props: GuessProps) => {
         }
     }
 
+    const getOrdinalSuffix = (position: number) => {
+        const s = ["th", "st", "nd", "rd"];
+        const v = position % 100;
+        return position + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
     const guessMatch = (matchId: number, choice: Result, result: Result) => {
         mutation.mutate({matchId, choice, result});
     }
@@ -91,13 +110,16 @@ const Guess = (props: GuessProps) => {
                             : <div>{new Date(match.matchDate + 'Z').toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/New_York'})}</div>
                             }
                             <div className='match-buttons'>
-                                <button 
-                                    className={"home-team" + (match.result === 'HOME' ? ' selected' : '')}
-                                    onClick={() => guessMatch(match.id, Result.HOME, match.result)}
-                                    disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
-                                    <img src={match.homeTeam.crest} alt={match.homeTeam.name}/>
-                                    <div>{match.homeTeam.name}</div>
-                                </button>
+                                <div className='home-team'>
+                                    <button 
+                                        className={match.result === 'HOME' ? ' selected' : ''}
+                                        onClick={() => guessMatch(match.id, Result.HOME, match.result)}
+                                        disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
+                                        <img src={match.homeTeam.crest} alt={match.homeTeam.name}/>
+                                        <div>{match.homeTeam.name}</div>
+                                    </button>
+                                    <div className='position'>{getOrdinalSuffix(leagueTable?.find(team => team.team_Name === match.homeTeam.name)?.position ?? 0)}</div>
+                                </div>
                                 {match.status === 'FINISHED' || match.status === 'LIVE' 
                                 ? <h1>{match.homeGoals} - {match.awayGoals}</h1>
                                 : <button 
@@ -105,13 +127,16 @@ const Guess = (props: GuessProps) => {
                                     onClick={() => guessMatch(match.id, Result.DRAW, match.result)}
                                     disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>Draw</button>
                                 }
-                                <button 
-                                    className={"away-team" + (match.result === 'AWAY' ? ' selected' : '')}
-                                    onClick={() => guessMatch(match.id, Result.AWAY, match.result)}
-                                    disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
-                                    <img src={match.awayTeam.crest} alt={match.awayTeam.name}/>
-                                    <div>{match.awayTeam.name}</div>
-                                </button>
+                                <div className='away-team'>
+                                    <button 
+                                        className={match.result === 'AWAY' ? ' selected' : ''}
+                                        onClick={() => guessMatch(match.id, Result.AWAY, match.result)}
+                                        disabled={match.status === 'LIVE' || match.status === 'FINISHED'}>
+                                        <img src={match.awayTeam.crest} alt={match.awayTeam.name}/>
+                                        <div>{match.awayTeam.name}</div>
+                                    </button>
+                                    <div className='position'>{getOrdinalSuffix(leagueTable?.find(team => team.team_Name === match.awayTeam.name)?.position ?? 0)}</div>
+                                </div>
                             </div>
                         </div>
                     ))}
