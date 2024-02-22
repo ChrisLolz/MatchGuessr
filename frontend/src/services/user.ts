@@ -1,5 +1,5 @@
-//const baseURL = "https://matchguessr.azurewebsites.net/auth"
-const baseURL = "http://localhost:8080/api/auth"
+const baseURL = "https://matchguessr.azurewebsites.net/api/auth"
+// const baseURL = "http://localhost:8080/api/auth"
 
 const register = async (username: string, password: string) => {
   const response = await fetch(`${baseURL}/register`, {

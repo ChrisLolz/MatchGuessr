@@ -1,5 +1,5 @@
-//const baseURL = "https://matchguessr.azurewebsites.net/guess"
-const baseURL = "http://localhost:8080/api/guess"
+const baseURL = "https://matchguessr.azurewebsites.net/api/guess"
+// const baseURL = "http://localhost:8080/api/guess"
 
 export enum Result {
     HOME = 'HOME',
