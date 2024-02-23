@@ -19,7 +19,7 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Set up JDK 17
-          uses: actions/setup-java@v3
+          uses: actions/setup-java@v4
           with:
             java-version: '17'
             distribution: 'adopt'
@@ -34,8 +34,10 @@ jobs:
             registry: ghrc.io
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
+
         - name: Build docker image
-          run: | 
-            docker build . --tag ghcr.io/chrislolz/matchguessr:latest
-            docker push ghcr.io/chrislolz/matchguessr:latest
+          run: docker build . --tag ghcr.io/chrislolz/matchguessr:latest
+          working-directory: ./backend
+        - name: Push docker image
+          run: docker push ghcr.io/chrislolz/matchguessr:latest
           working-directory: ./backend
