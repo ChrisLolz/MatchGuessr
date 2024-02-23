@@ -36,6 +36,6 @@ jobs:
             password: ${{ secrets.GITHUB_TOKEN }}
         - name: Build docker image
           run: | 
-            docker build . --tag ghcr.io/Chrislolz/matchguessr:latest
-            docker push ghcr.io/Chrislolz/matchguessr:latest
+            docker build . --tag ghcr.io/chrislolz/matchguessr:latest
+            docker push ghcr.io/chrislolz/matchguessr:latest
           working-directory: ./backend
