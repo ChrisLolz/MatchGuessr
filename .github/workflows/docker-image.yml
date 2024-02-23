@@ -33,7 +33,7 @@ jobs:
           with:
             registry: ghrc.io
             username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+            password: ${{ secrets.DOCKER }}
 
         - name: Build docker image
           run: docker build . --tag ghcr.io/chrislolz/matchguessr:latest
