@@ -1,4 +1,5 @@
-const baseURL = "https://matchguessr.azurewebsites.net/api/guess"
+const baseURL = "https://matchguessr.yellowhill-bd09ee4c.canadaeast.azurecontainerapps.io/api/guess"
+// const baseURL = "https://matchguessr.azurewebsites.net/api/guess"
 // const baseURL = "http://localhost:8080/api/guess"
 
 export enum Result {

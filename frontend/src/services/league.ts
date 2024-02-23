@@ -1,4 +1,5 @@
-const baseURL = "https://matchguessr.azurewebsites.net/api"
+const baseURL = "https://matchguessr.yellowhill-bd09ee4c.canadaeast.azurecontainerapps.io/api"
+// const baseURL = "https://matchguessr.azurewebsites.net/api"
 // const baseURL = "http://localhost:8080/api"
 
 interface Standing {
