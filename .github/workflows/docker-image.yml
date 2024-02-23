@@ -23,7 +23,7 @@ jobs:
           with:
             java-version: '17'
             distribution: 'adopt'
-
+            
         - name: Build with Maven
           run: mvn clean package
           working-directory: ./backend
@@ -38,3 +38,4 @@ jobs:
           run: | 
             docker build . --tag ghcr.io/chrislolz/matchguessr:latest
             docker push ghcr.io/chrislolz/matchguessr:latest
+          working-directory: ./backend
