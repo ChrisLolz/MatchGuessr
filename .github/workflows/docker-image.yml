@@ -21,9 +21,8 @@ jobs:
             java-version: '17'
             distribution: 'adopt'
         - name: Build with Maven
-          run: |
-            cd backend
-            mvn clean package
+          run: mvn clean package
+          working-directory: ./backend
 
         - name: Login to Github Container Registry
           uses: docker/login-action@v3
