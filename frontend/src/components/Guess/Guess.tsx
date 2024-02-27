@@ -141,7 +141,7 @@ const Guess = (props: GuessProps) => {
                                     <div className='position'>{getOrdinalSuffix(leagueTable?.find(team => team.team_Name === match.homeTeam.name)?.position ?? 0)}</div>
                                 </div>
                                 {match.status === 'FINISHED' || match.status === 'LIVE' 
-                                ? <h1>{match.homeGoals} - {match.awayGoals}</h1>
+                                ? <h1 className={match.result === 'DRAW' ? 'score-selected' : ''}>{match.homeGoals} - {match.awayGoals}</h1>
                                 : <button 
                                     className={"draw" + (match.result === 'DRAW' ? ' selected' : '')}
                                     onClick={() => guessMatch(match.id, Result.DRAW, match.result)}
