@@ -48,7 +48,7 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
                 "WHEN m.away_team_id = t.id AND m.away_goals > m.home_goals THEN 3 "+
                 "WHEN m.home_goals = m.away_goals THEN 1 "+
                 "ELSE 0 "+
-            "END) - CASE WHEN t.code = 'EVE' THEN 10 ELSE 0 END) AS points, "+
+            "END) - CASE WHEN t.code = 'EVE' THEN 6 WHEN t.code = 'NOT' THEN 4 ELSE 0 END) AS points, "+
         "SUM(CASE WHEN m.home_team_id = t.id THEN m.home_goals - m.away_goals "+
                 "WHEN m.away_team_id = t.id THEN m.away_goals - m.home_goals "+
                 "ELSE 0 END) AS goal_difference "+
